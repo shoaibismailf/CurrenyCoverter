@@ -1,0 +1,68 @@
+﻿@model Currency.Application.Models.Response.HistoricalRateResponse
+
+@{
+    ViewData["Title"] = "Latest Historical Rates ";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <p>
+        <strong>Date:</strong>
+        @if (Model.StartDate.HasValue)
+        {
+            @($"{Model.StartDate:yyyy-MM-dd} - {Model.EndDate:yyyy-MM-dd}")
+        }
+        else
+        {
+            @Model.StartDate?.ToString("yyyy-MM-dd")
+        }
+    </p>
+
+    <form method="get" asp-controller="Rates" asp-action="GetHistoricalExchangeRates"
+          class="row g-2 mb-3 d-flex justify-content-end">
+        <div class="col-md-2">
+            <input type="search" name="baseCurrency" class="form-control"
+                   placeholder="Currency (e.g. USD)" value="@(Context.Request.Query["baseCurrency"])" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="startDate" class="form-control" value="@(Context.Request.Query["startDate"])" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="endDate" class="form-control" value="@(Context.Request.Query["endDate"])" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
+
+    <!-- Historical range -->
+    @if (Model.HistoricalRates != null)
+    {
+        <table class="table table-striped table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    @if (Model.HistoricalRates.Any())
+                    {
+                        foreach (var currency in Model.HistoricalRates.First().Value.Keys)
+                        {
+                            <th>@currency</th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dateEntry in Model.HistoricalRates)
+                {
+                    <tr>
+                        <td>@dateEntry.Key</td>
+                        @foreach (var rate in dateEntry.Value)
+                        {
+                            <td>@rate.Value</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

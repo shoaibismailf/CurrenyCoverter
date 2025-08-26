@@ -1,0 +1,54 @@
+﻿@model Currency.Application.Models.RateResponse
+
+@{
+    ViewData["Title"] = "Latest Currency Rates";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <p>
+        <strong>Date:</strong>
+        @Model.Date.ToString("yyyy-MM-dd")
+    </p>
+
+    <form method="get" asp-controller="Rates" asp-action="Latest"
+          class="row g-2 mb-3 d-flex justify-content-end">
+        <div class="col-md-2">
+            <input type="search" name="baseCurrency" class="form-control"
+                   placeholder="Currency (e.g. USD)" value="@(Context.Request.Query["baseCurrency"])" />
+        </div>
+        <div class="col-md-2">
+            <input type="search" name="symbols" class="form-control"
+                   placeholder="Symbol (e.g. EUR,GBP)" value="@(Context.Request.Query["symbols"])" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="startDate" class="form-control" value="@(Context.Request.Query["startDate"])" />
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
+
+    @if (Model.Rates.Count > 0)
+    {
+        <table class="table table-striped table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Currency</th>
+                    <th>Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rate in Model.Rates)
+                {
+                    <tr>
+                        <td>@rate.Key</td>
+                        <td>@rate.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>

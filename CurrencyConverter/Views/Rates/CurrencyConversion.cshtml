@@ -1,0 +1,63 @@
+﻿@model Currency.Application.Models.Response.ConvertExchangeRatesResponse
+
+@{
+    ViewData["Title"] = "Currency Converter";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="post" asp-action="Convert" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <input type="text" name="from" class="form-control" placeholder="From (e.g. EUR)" value="@Model?.From" required />
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="to" class="form-control" placeholder="To (e.g. USD)" value="@Model?.To" required />
+        </div>
+        <div class="col-md-3">
+            <input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount" value="@Model?.Amount" required />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Convert</button>
+        </div>
+    </form>
+
+    @if (Model != null && Model.Amount > 0 && Model.ConvertedAmounts?.Any() == true)
+    {
+        <div class="card shadow-lg border-0 mt-4 rounded-3">
+            <div class="card-header bg-gradient " style="background: linear-gradient(90deg, #007bff, #6610f2);">
+                <h4 class="mb-0">
+                     Conversion Result
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <p class="fs-5 mb-3">
+                    <span class="fw-bold">@Model.Amount @Model.From</span> =
+                </p>
+
+                <div class="row g-3">
+                    @foreach (var kvp in Model.ConvertedAmounts)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="border rounded-3 p-3 h-100 shadow-sm text-center">
+                                <span class="d-block fw-semibold fs-6 text-primary">
+                                    @kvp.Key
+                                </span>
+                                <span class="badge bg-success fs-6 px-3 py-2 mt-2">
+                                    @kvp.Value
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <hr class="my-4" />
+                <p class="text-muted mb-0">
+                    📅 Rate Date: <strong>@Model.Date.ToString("yyyy-MM-dd")</strong>
+                </p>
+            </div>
+        </div>
+    }
+
+</div>
